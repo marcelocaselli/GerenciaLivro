@@ -1,6 +1,10 @@
-﻿using GerenciadorLivro.Application.Models;
+﻿using GerenciaLivro.Application.Commands.DeleteUser;
+using GerenciaLivro.Application.Commands.InsertUser;
+using GerenciaLivro.Application.Commands.UpdateUser;
+using GerenciaLivro.Application.Queries.GetAllUsers;
+using GerenciaLivro.Application.Queries.GetUserById;
 using GerenciaLivro.Application.Services;
-using GerenciaLivro.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorLivro.API.Controllers
@@ -9,28 +13,30 @@ namespace GerenciadorLivro.API.Controllers
     [Route("api/users")]
     public class UserController : ControllerBase
     {
-        private readonly GerenciadorLivroDbContext _context;
         private readonly IUserService _service;
-        public UserController(GerenciadorLivroDbContext context, IUserService service)
+        private readonly IMediator _mediator;
+        public UserController(IUserService service, IMediator mediator)
         {
-            _context = context;
             _service = service;
+            _mediator = mediator;
         }
 
         //GET api/users
         [HttpGet]
-        public IActionResult GetAll(string search = "")
+        public async Task<IActionResult> GetAll(string search = "")
         {
-            var result = _service.GetAll();
+            var query = new GetAllUserQuery();
+            
+            var result = await _mediator.Send(query);
 
             return Ok(result);
         }
 
         //GETById api/users/id
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var result = _service.GetById(id);
+            var result = await _mediator.Send(new GetUserByIdQuery(id));
 
             if (!result.IsSuccess)
             {
@@ -42,18 +48,18 @@ namespace GerenciadorLivro.API.Controllers
 
         //POST api/users
         [HttpPost]
-        public IActionResult Post(CreateUserInputModel model)
+        public async Task<IActionResult> Post(InsertUserCommand command)
         {
-            var result = _service.Insert(model);
+            var result = await _mediator.Send(command);
 
-            return CreatedAtAction(nameof(GetById), new { id = result.Data }, model);
+            return CreatedAtAction(nameof(GetById), new { id = result.Data }, command);
         }
 
         //PUT api/users/id
         [HttpPut("{id}")]
-        public IActionResult Put(int id, UpdateUserInputModel model)
+        public async Task<IActionResult> Put(int id, UpdateUserCommand command)
         {
-            var result = _service.Update(model);
+            var result = await _mediator.Send(command);
 
             if(!result.IsSuccess)
             {
@@ -65,9 +71,9 @@ namespace GerenciadorLivro.API.Controllers
 
         //DELETE api/users/id
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = _service.Delete(id);
+            var result = await _mediator.Send(new DeleteUserCommand(id));
 
             if (!result.IsSuccess)
             {

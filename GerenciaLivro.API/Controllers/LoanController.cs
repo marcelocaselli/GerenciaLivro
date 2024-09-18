@@ -1,7 +1,10 @@
-﻿using GerenciadorLivro.Application.Models;
-using GerenciaLivro.Application.Models;
+﻿using GerenciaLivro.Application.Commands.DeleteLoan;
+using GerenciaLivro.Application.Commands.InsertLoan;
+using GerenciaLivro.Application.Commands.UpdateLoan;
+using GerenciaLivro.Application.Queries.GetAllLoans;
+using GerenciaLivro.Application.Queries.GetLoanById;
 using GerenciaLivro.Application.Services;
-using GerenciaLivro.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GerenciadorLivro.API.Controllers
@@ -10,52 +13,53 @@ namespace GerenciadorLivro.API.Controllers
     [Route("api/loans")]
     public class LoanController : ControllerBase
     {
-        private readonly GerenciadorLivroDbContext _context;
         private readonly ILoanService _service;
-        public LoanController(GerenciadorLivroDbContext context, ILoanService service)
+        private readonly IMediator _mediator;
+        public LoanController(ILoanService service, IMediator mediator)
         {
-            _context = context;
             _service = service;
+            _mediator = mediator;
         }
 
         //GET api/loans
         [HttpGet]
-        public IActionResult GetAll(string search = "")
+        public async Task<IActionResult> GetAll(string search = "")
         {
-            var result = _service.GetAll();
+            var query = new GetAllLoanQuery();
+
+            var result = await _mediator.Send(query);
 
             return Ok(result);
         }
 
         //GETById api/loans/id
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var result = _service.GetById(id);
+            var result = await _mediator.Send(new GetLoanByIdQuery(id));
 
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Message);
             }
-
             return Ok(result);
         }
 
         //POST api/loans
         [HttpPost]
-        public IActionResult Post(CreateLoanInputModel model)
+        public async Task<IActionResult> Post(InsertLoanCommand command)
         {
-            var result = _service.Insert(model);
+            var result = await _mediator.Send(command);
 
-            return CreatedAtAction(nameof(GetById), new { id = result.Data}, model);
+            return CreatedAtAction(nameof(GetById), new { id = result.Data}, command);
              
         }
 
         //Update api/loans/id
         [HttpPut("{id}")]
-        public IActionResult Put(int id, UpdateLoanInputModel model)
+        public async Task<IActionResult> Put(int id, UpdateLoanCommand command)
         {
-            var result = _service.Update(model);
+            var result = await _mediator.Send(command);
 
             if (!result.IsSuccess)
             {
@@ -66,9 +70,9 @@ namespace GerenciadorLivro.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id) 
+        public async Task<IActionResult> Delete(int id) 
         {
-            var result = _service.Delete(id);
+            var result = await _mediator.Send(new DeleteLoanCommand(id));
 
             if (!result.IsSuccess)
             {

@@ -1,6 +1,10 @@
-﻿using GerenciadorLivro.Application.Models;
+﻿using GerenciaLivro.Application.Commands.DeleteBook;
+using GerenciaLivro.Application.Commands.InsertBook;
+using GerenciaLivro.Application.Commands.UpdateBook;
+using GerenciaLivro.Application.Queries.GetAllBooks;
+using GerenciaLivro.Application.Queries.GetBookById;
 using GerenciaLivro.Application.Services;
-using GerenciaLivro.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Controllers
@@ -9,28 +13,30 @@ namespace Biblioteca.Controllers
     [Route("api/books")]
     public class BookController : ControllerBase
     {
-        private readonly GerenciadorLivroDbContext _context;
         private readonly IBookService _service;
-        public BookController(GerenciadorLivroDbContext context, IBookService service)
+        private readonly IMediator _mediator;
+        public BookController(IBookService service, IMediator mediator)
         {
-            _context = context;
             _service = service;
+            _mediator = mediator;
         }
        
         //GET api/books
         [HttpGet]
-        public IActionResult GetAll(string search = "")
+        public async Task<IActionResult> GetAll(string search = "")
         {
-            var result = _service.GetAll();
+            var query = new GetAllBookQuery();
+
+            var result = await _mediator.Send(query);
 
             return Ok(result);
         }
 
         //GETById api/books/id
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var result = _service.GetById(id);
+            var result = await _mediator.Send(new GetBookByIdQuery(id));
 
             if (!result.IsSuccess)
             {
@@ -41,18 +47,18 @@ namespace Biblioteca.Controllers
 
         //POST api/books
         [HttpPost]
-        public IActionResult Post(CreateBookInputModel model)
+        public async Task<IActionResult> Post(InsertBookCommand command)
         {
-            var result = _service.Insert(model);
+            var result = await _mediator.Send(command);
 
-            return CreatedAtAction(nameof(GetById), new { id = result.Data }, model);
+            return CreatedAtAction(nameof(GetById), new { id = result.Data }, command);
         }
 
         //PUT api/books/id
         [HttpPut("{id}")]
-        public IActionResult Put(int id, UpdateBookInputModel model)
+        public async Task<IActionResult> Put(int id, UpdateBookCommand command)
         {
-            var result = _service.Update(model);
+            var result = await _mediator.Send(command);
 
             if (!result.IsSuccess)
             {
@@ -64,9 +70,9 @@ namespace Biblioteca.Controllers
 
         //DELETE api/books/id
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = _service.Delete(id);
+            var result = await _mediator.Send(new DeleteBookCommand(id));
 
             if (!result.IsSuccess)
             {
