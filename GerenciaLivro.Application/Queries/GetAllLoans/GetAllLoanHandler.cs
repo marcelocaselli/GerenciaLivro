@@ -1,5 +1,5 @@
-﻿using GerenciadorLivro.Application.Models;
-using GerenciaLivro.Application.Models;
+﻿using GerenciaLivro.Application.Models;
+using GerenciaLivro.Core.Repositories;
 using GerenciaLivro.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -8,18 +8,15 @@ namespace GerenciaLivro.Application.Queries.GetAllLoans
 {
     public class GetAllLoanHandler : IRequestHandler<GetAllLoanQuery, ResultViewModel<List<LoanViewModel>>>
     {
-        private readonly GerenciadorLivroDbContext _context;
-        public GetAllLoanHandler(GerenciadorLivroDbContext context)
+        private readonly ILoanRepository _repository;
+        public GetAllLoanHandler(ILoanRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
         public async Task<ResultViewModel<List<LoanViewModel>>> Handle(GetAllLoanQuery request, CancellationToken cancellationToken)
         {
-            var loans = await _context.Loans
-               .Include(x => x.Book)
-               .Include(x => x.User)
-               .ToListAsync();
-
+            var loans = await _repository.GetAll();
+               
             var model = loans.Select(LoanViewModel.FromEntity).ToList();
 
             return ResultViewModel<List<LoanViewModel>>.Success(model);

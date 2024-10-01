@@ -1,4 +1,5 @@
 ﻿using GerenciaLivro.Application.Models;
+using GerenciaLivro.Core.Repositories;
 using GerenciaLivro.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -7,14 +8,14 @@ namespace GerenciaLivro.Application.Commands.UpdateUser
 {
     public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, ResultViewModel>
     {
-        private readonly GerenciadorLivroDbContext _context;
-        public UpdateUserHandler(GerenciadorLivroDbContext context)
+        private readonly IUserRepository _repository;
+        public UpdateUserHandler(IUserRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
         public async Task<ResultViewModel> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == request.IdUser);
+            var user = await _repository.GetDetailsById(request.IdUser);
 
             if (user is null)
             {
@@ -22,8 +23,8 @@ namespace GerenciaLivro.Application.Commands.UpdateUser
             }
 
             user.Update(request.Name, request.Email, request.BirthDate);
-            _context.Users.Update(user);
-            _context.SaveChanges();
+
+            await _repository.Update(user);
 
             return ResultViewModel.Success();
         }

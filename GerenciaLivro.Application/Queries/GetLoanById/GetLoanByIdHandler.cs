@@ -1,21 +1,19 @@
-﻿using GerenciadorLivro.Application.Models;
-using GerenciaLivro.Application.Models;
-using GerenciaLivro.Infrastructure.Persistence;
+﻿using GerenciaLivro.Application.Models;
+using GerenciaLivro.Core.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace GerenciaLivro.Application.Queries.GetLoanById
 {
     public class GetLoanByIdHandler : IRequestHandler<GetLoanByIdQuery, ResultViewModel<LoanViewModel>>
     {
-        private readonly GerenciadorLivroDbContext _context;
-        public GetLoanByIdHandler(GerenciadorLivroDbContext context)
+        private readonly ILoanRepository _repository;
+        public GetLoanByIdHandler(ILoanRepository repository)
         {
-            _context = context;   
+            _repository = repository;
         }
         public async Task<ResultViewModel<LoanViewModel>> Handle(GetLoanByIdQuery request, CancellationToken cancellationToken)
         {
-            var loan = await _context.Loans.SingleOrDefaultAsync(x => x.Id == request.Id);
+            var loan = await _repository.GetDetailsById(request.Id);
             var model = LoanViewModel.FromEntity(loan);
 
             if (model == null)

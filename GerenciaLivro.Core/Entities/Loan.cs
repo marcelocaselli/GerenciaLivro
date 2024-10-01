@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace GerenciadorLivro.Core.Entities
+﻿namespace GerenciadorLivro.Core.Entities
 {
     public class Loan : BaseEntity
     {
@@ -16,13 +14,11 @@ namespace GerenciadorLivro.Core.Entities
         public int IdBook { get; set; }
         public Book Book { get; set; }
         public DateTime LoanDate { get; set; }
-        public DateTime ReturnDate { get; set; }
-
-        public void Update(int idUser, int idBook, DateTime returnDate)
+        
+        public void Update(int idUser, int idBook)
         {
             IdUser = idUser;
             IdBook = idBook;
-            ReturnDate = returnDate;
         }
     }
 }

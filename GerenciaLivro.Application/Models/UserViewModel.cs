@@ -1,6 +1,11 @@
 ﻿using GerenciadorLivro.Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace GerenciadorLivro.Application.Models
+namespace GerenciaLivro.Application.Models
 {
     public class UserViewModel
     {
@@ -10,7 +15,6 @@ namespace GerenciadorLivro.Application.Models
             Email = email;
             BirthDate = birthDate;
         }
-
         public string Name { get; private set; }
         public string Email { get; private set; }
         public DateTime BirthDate { get; set; }

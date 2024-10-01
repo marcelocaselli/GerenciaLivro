@@ -1,5 +1,4 @@
 ﻿using GerenciaLivro.Application.Commands.InsertBook;
-using GerenciaLivro.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GerenciaLivro.Application
@@ -9,17 +8,7 @@ namespace GerenciaLivro.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services
-                .AddServices()
                 .AddHandlers();
-
-            return services;
-        }
-
-        private static IServiceCollection AddServices(this IServiceCollection services)
-        {
-            services.AddScoped<ILoanService, LoanService>();
-            services.AddScoped<IBookService, BookService>();
-            services.AddScoped<IUserService, UserService>();
 
             return services;
         }

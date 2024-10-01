@@ -1,21 +1,20 @@
-﻿using GerenciadorLivro.Application.Models;
-using GerenciaLivro.Application.Models;
-using GerenciaLivro.Infrastructure.Persistence;
+﻿using GerenciaLivro.Application.Models;
+using GerenciaLivro.Core.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace GerenciaLivro.Application.Queries.GetAllBooks
 {
     public class GetAllBookHandler : IRequestHandler<GetAllBookQuery, ResultViewModel<List<BookViewModel>>>
     {
-        private readonly GerenciadorLivroDbContext _context;
-        public GetAllBookHandler(GerenciadorLivroDbContext context)
+        private readonly IBookRepository _repository;
+        public GetAllBookHandler(IBookRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
         public async Task<ResultViewModel<List<BookViewModel>>> Handle(GetAllBookQuery request, CancellationToken cancellationToken)
         {
-            var books = await _context.Books.ToListAsync();
+            var books = await _repository.GetAll();
+
             var model = books.Select(BookViewModel.FromEntity).ToList();
 
             return ResultViewModel<List<BookViewModel>>.Success(model);

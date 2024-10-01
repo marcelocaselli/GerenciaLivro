@@ -3,7 +3,6 @@ using GerenciaLivro.Application.Commands.InsertLoan;
 using GerenciaLivro.Application.Commands.UpdateLoan;
 using GerenciaLivro.Application.Queries.GetAllLoans;
 using GerenciaLivro.Application.Queries.GetLoanById;
-using GerenciaLivro.Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +12,9 @@ namespace GerenciadorLivro.API.Controllers
     [Route("api/loans")]
     public class LoanController : ControllerBase
     {
-        private readonly ILoanService _service;
         private readonly IMediator _mediator;
-        public LoanController(ILoanService service, IMediator mediator)
+        public LoanController(IMediator mediator)
         {
-            _service = service;
             _mediator = mediator;
         }
 

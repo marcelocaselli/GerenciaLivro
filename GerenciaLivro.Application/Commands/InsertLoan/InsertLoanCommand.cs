@@ -14,3 +14,5 @@ namespace GerenciaLivro.Application.Commands.InsertLoan
             => new(IdBook, IdUser, LoanDate);
     }
 }
+
+

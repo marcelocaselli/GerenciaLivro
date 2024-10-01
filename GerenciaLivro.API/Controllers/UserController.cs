@@ -3,7 +3,6 @@ using GerenciaLivro.Application.Commands.InsertUser;
 using GerenciaLivro.Application.Commands.UpdateUser;
 using GerenciaLivro.Application.Queries.GetAllUsers;
 using GerenciaLivro.Application.Queries.GetUserById;
-using GerenciaLivro.Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +12,9 @@ namespace GerenciadorLivro.API.Controllers
     [Route("api/users")]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _service;
         private readonly IMediator _mediator;
-        public UserController(IUserService service, IMediator mediator)
+        public UserController(IMediator mediator)
         {
-            _service = service;
             _mediator = mediator;
         }
 

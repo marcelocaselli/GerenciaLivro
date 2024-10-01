@@ -1,11 +1,5 @@
-﻿using GerenciadorLivro.Application.Models;
-using GerenciaLivro.Application.Models;
+﻿using GerenciaLivro.Application.Models;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GerenciaLivro.Application.Queries.GetUserById
 {

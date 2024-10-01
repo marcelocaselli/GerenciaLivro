@@ -1,6 +1,6 @@
 ﻿using GerenciadorLivro.Core.Entities;
 
-namespace GerenciadorLivro.Application.Models
+namespace GerenciaLivro.Application.Models
 {
     public class BookViewModel
     {

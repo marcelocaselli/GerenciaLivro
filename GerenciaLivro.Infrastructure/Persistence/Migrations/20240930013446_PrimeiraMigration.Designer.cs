@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GerenciaLivro.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(GerenciadorLivroDbContext))]
-    [Migration("20240910001129_PrimeiraMigration")]
+    [Migration("20240930013446_PrimeiraMigration")]
     partial class PrimeiraMigration
     {
         /// <inheritdoc />
@@ -80,9 +80,6 @@ namespace GerenciaLivro.Infrastructure.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("LoanDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ReturnDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");

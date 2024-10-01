@@ -1,5 +1,4 @@
-﻿using GerenciadorLivro.Application.Models;
-using GerenciaLivro.Application.Models;
+﻿using GerenciaLivro.Application.Models;
 using GerenciaLivro.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

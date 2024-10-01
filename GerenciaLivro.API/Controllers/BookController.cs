@@ -3,7 +3,6 @@ using GerenciaLivro.Application.Commands.InsertBook;
 using GerenciaLivro.Application.Commands.UpdateBook;
 using GerenciaLivro.Application.Queries.GetAllBooks;
 using GerenciaLivro.Application.Queries.GetBookById;
-using GerenciaLivro.Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,11 +12,9 @@ namespace Biblioteca.Controllers
     [Route("api/books")]
     public class BookController : ControllerBase
     {
-        private readonly IBookService _service;
         private readonly IMediator _mediator;
-        public BookController(IBookService service, IMediator mediator)
+        public BookController(IMediator mediator)
         {
-            _service = service;
             _mediator = mediator;
         }
        

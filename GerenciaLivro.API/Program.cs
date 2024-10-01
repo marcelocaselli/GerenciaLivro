@@ -1,15 +1,11 @@
-using GerenciaLivro.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 using GerenciaLivro.Application;
+using GerenciaLivro.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-var connectionString = builder.Configuration.GetConnectionString("GerenciaLivroCs");
-
-builder.Services.AddDbContext<GerenciadorLivroDbContext>(options => options.UseSqlServer(connectionString));
-
-builder.Services.AddApplication();
+builder.Services
+    .AddApplication()
+    .AddInfrastructure(builder.Configuration);
 
 // Add services to the container.
 

@@ -1,20 +1,19 @@
 ﻿using GerenciaLivro.Application.Models;
-using GerenciaLivro.Infrastructure.Persistence;
+using GerenciaLivro.Core.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace GerenciaLivro.Application.Commands.UpdateBook
 {
     public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, ResultViewModel>
     {
-        private readonly GerenciadorLivroDbContext _context;
-        public UpdateBookHandler(GerenciadorLivroDbContext context)
+        private readonly IBookRepository _repository;
+        public UpdateBookHandler(IBookRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
         public async Task<ResultViewModel> Handle(UpdateBookCommand request, CancellationToken cancellationToken)
         {
-            var book = await _context.Books.SingleOrDefaultAsync(x => x.Id == request.IdBook);
+            var book = await _repository.GetDetailsById(request.IdBook);
 
             if (book is null)
             {
@@ -22,8 +21,8 @@ namespace GerenciaLivro.Application.Commands.UpdateBook
             }
 
             book.Update(request.Title, request.Author, request.Isbn, request.YearOfPublication);
-            _context.Books.Update(book);
-            await _context.SaveChangesAsync();
+
+            await _repository.UpDate(book);
 
             return ResultViewModel.Success();
         }

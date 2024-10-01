@@ -1,26 +1,25 @@
 ﻿using GerenciaLivro.Application.Models;
-using GerenciaLivro.Infrastructure.Persistence;
+using GerenciaLivro.Core.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace GerenciaLivro.Application.Commands.DeleteBook
 {
     public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, ResultViewModel>
     {
-        private readonly GerenciadorLivroDbContext _context;
-        public DeleteBookHandler(GerenciadorLivroDbContext context)
+        private readonly IBookRepository _repository;
+        public DeleteBookHandler(IBookRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
         public async Task<ResultViewModel> Handle(DeleteBookCommand request, CancellationToken cancellationToken)
         {
-            var book = await _context.Books.SingleOrDefaultAsync(x => x.Id == request.Id);
+            var book = await _repository.GetDetailsById(request.Id);
             if (book == null)
             {
                 return ResultViewModel.Error("Livro não encontrado.");
             }
-            _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
+            
+            await _repository.Delete(book.Id);
 
             return ResultViewModel.Success();
         }

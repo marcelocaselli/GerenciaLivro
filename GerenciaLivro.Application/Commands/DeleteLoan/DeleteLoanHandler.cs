@@ -1,26 +1,25 @@
 ﻿using GerenciaLivro.Application.Models;
-using GerenciaLivro.Infrastructure.Persistence;
+using GerenciaLivro.Core.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace GerenciaLivro.Application.Commands.DeleteLoan
 {
     public class DeleteLoanHandler : IRequestHandler<DeleteLoanCommand, ResultViewModel>
     {
-        private readonly GerenciadorLivroDbContext _context;
-        public DeleteLoanHandler(GerenciadorLivroDbContext context)
+        private readonly ILoanRepository _repository;
+        public DeleteLoanHandler(ILoanRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
         public async Task<ResultViewModel> Handle(DeleteLoanCommand request, CancellationToken cancellationToken)
         {
-            var loan = await _context.Loans.SingleOrDefaultAsync(x => x.Id == request.Id);
+            var loan = await _repository.GetDetailsById(request.Id);
             if (loan == null)
             {
                 return ResultViewModel.Error("Livro não encontrado.");
             }
-            _context.Loans.Remove(loan);
-            await _context.SaveChangesAsync();
+
+            await _repository.Delete(loan.Id);
 
             return ResultViewModel.Success();
         }
